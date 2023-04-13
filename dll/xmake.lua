@@ -1,12 +1,11 @@
-target("ModdingFramework_EXE")
-    set_kind("binary")
+target("ModdingFramework_DLL")
+    set_kind("shared")
     set_basename("modding_framework")
-    as_windows_app()
-    add_files("*.cpp", "*.rc")
+    use_wxwidgets()
+    add_files("*.cpp")
     add_packages(
         "DLL_Injection",
         "Logging",
-        "simpleini",
         "spdlog",
         "StringFormatting",
         "UserInterface"

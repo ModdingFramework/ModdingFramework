@@ -1,18 +1,36 @@
-#include <Injected_DLL.h>
-#include <Logging.h>
-#include <ModdingFramework/Runtime.h>
+#include <Logging/Autodetect.h>
+//
 
-// testing...
-#include <Serialization.h>
+#include <DLL_Injection/Injected_DLL.h>
 #include <UserInterface.h>
 
-SetLogFilePath("Modding/Logs/ModdingFramework/modding_framework.dll.log");
+#include <filesystem>
+
+// TODO
+// #include <ModdingFramework/Runtime.h>
+
+Logging_SetLogFilePath("C:/temp/ModdingFrameworkDLL.log");
+
+// Return the name of the current .dll using GetModuleFileName
+// The current hMODULE is avaiable via Injected_DLL::InjectedIntoModule
+std::filesystem::path GetDLLPath() {
+    char dllPath[MAX_PATH];
+    GetModuleFileName(Injected_DLL::InjectedIntoModule, dllPath, MAX_PATH);
+    return std::filesystem::path(dllPath);
+}
 
 DLL_Main {
-    Log("Modding Framework DLL loaded");
-    ModdingFramework::Runtime::Boot();
+    auto dllPath = GetDLLPath();
+    // Logging::Config::LogFilePath = logPath.string();
+
+    Logging_Log("Modding Framework DLL loaded");  // <--- do anything!
+    Logging_Log("DLL Path: '{}'", dllPath.string());
+    Logging_Log("Look, we did a thing!");
+
+    // TODO
+    // ModdingFramework::Runtime::Boot();
 
     // TODO - move eject responsibilities to runtime
-    Log("Ejecting Modding Framework DLL");
+    Logging_Log("Ejecting Modding Framework DLL");
     EjectDLL();
 }

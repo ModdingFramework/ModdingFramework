@@ -22,7 +22,13 @@ std::filesystem::path GetTargetExecutable(const std::filesystem::path& iniPath) 
 
 // Start the target executable as defined in the .ini (if not already running)
 // and inject the specified DLL into it
-void StartModdingFramework() {}
+void StartModdingFramework(std::filesystem::path& game, std::filesystem::path& dll) {
+    Log("Modding Framework starting...");
+    Log("Injecting DLL '{}' into game '{}'", dll.string(), game.string());
+    DLL_Injector::InjectDLL(game.string(), dll.string());
+    Log("Injected DLL '{}' into game '{}'", dll.string(), game.string());
+    Log("Modding Framework started");
+}
 
 UI_Main {
     auto exePath = GetExecutablePath();
@@ -31,7 +37,7 @@ UI_Main {
     auto logPath = exePath.replace_extension("log");
 
     Logging::Config::LogFilePath = logPath.string();
-    Log("Modding Framework started");
+    Log("Modding Framework loading...");
 
     if (!std::filesystem::exists(dllPath)) {
         Log("DLL '{}' does not exist, exiting...", dllPath.string());
@@ -48,10 +54,8 @@ UI_Main {
             iniPath.string());
         return 1;
     }
-    if (!std::filesystem::exists(game)) {
-        Log("Game executable '{}' does not exist, exiting...", game.string());
-        return 1;
-    }
+
+    StartModdingFramework(game, dllPath);
 
     return 0;
 }
